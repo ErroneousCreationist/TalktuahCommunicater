@@ -1,0 +1,37 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TalktuahCommunicationsLLC.MainWindow"
+        Title="TalktuahCommunicater1925"
+        Name="WindowSigma">
+    <StackPanel>
+        <TextBlock Text="Welcome to Talktuah Communicater 1925" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="40"></TextBlock>
+
+        <Button Content="Join Genreal Chatroom" Background="Gray" HorizontalAlignment="Center"></Button>
+
+        <Button Content="Join Politicool Chatroom" Background="Gray" HorizontalAlignment="Center"></Button>
+
+        <Button Content="Join Randoom Chatroom" Background="Gray" HorizontalAlignment="Center"></Button>
+
+        <Grid ShowGridLines="False" Margin="5"
+          ColumnDefinitions="550, 600" 
+          RowDefinitions="Auto, Auto, Auto">
+            <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">Direct IP</Label>
+            <TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left"/>
+            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right">Direct Port</Label>
+            <TextBox Grid.Row="1"  Grid.Column="1" HorizontalAlignment="Left"/>
+        </Grid>
+        <Button Content="Conecc" Background="Gray" HorizontalAlignment="Center"></Button>
+
+        <Grid ShowGridLines="False" Margin="5"
+          ColumnDefinitions="550, 600" 
+          RowDefinitions="Auto, Auto, Auto">
+            <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">Host Port</Label>
+            <TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left"/>
+        </Grid>
+        <Button Content="Begin Host" Background="Gray" HorizontalAlignment="Center"></Button>
+    </StackPanel>
+</Window>
+
