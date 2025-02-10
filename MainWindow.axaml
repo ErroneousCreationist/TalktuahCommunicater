@@ -5,7 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TalktuahCommunicationsLLC.MainWindow"
         Title="TalktuahCommunicater1925"
-        Name="WindowSigma">
+        Name="TheMainWindow">
     <StackPanel>
         <TextBlock Text="Welcome to Talktuah Communicater 1925" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="40"></TextBlock>
 

@@ -1431,11 +1431,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/samuel/Documents/Clutter/idkprojects/TalktuahCommunicationsLLC/TalktuahCommunicationsLLC.csproj",
+      "projectUniqueName": "/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicationsLLC.csproj",
       "projectName": "TalktuahCommunicationsLLC",
-      "projectPath": "/Users/samuel/Documents/Clutter/idkprojects/TalktuahCommunicationsLLC/TalktuahCommunicationsLLC.csproj",
+      "projectPath": "/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicationsLLC.csproj",
       "packagesPath": "/Users/samuel/.nuget/packages/",
-      "outputPath": "/Users/samuel/Documents/Clutter/idkprojects/TalktuahCommunicationsLLC/obj/",
+      "outputPath": "/Users/samuel/Documents/GitHub/TalktuahCommunicater/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/samuel/.nuget/NuGet/NuGet.Config"
