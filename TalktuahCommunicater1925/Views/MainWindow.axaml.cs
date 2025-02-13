@@ -15,21 +15,6 @@ namespace TalktuahCommunicater1925
             InitializeComponent();
         }
 
-        public void EnterJoinPort(object sender, TextInputEventArgs e)
-        {
-            
-        }
-
-        public void EnterJoinIP(object sender, TextInputEventArgs e)
-        {
-            
-        }
-
-        public void EnterUsername(object sender, TextInputEventArgs e)
-        {
-            
-        }
-
         public void JoinGeneralChat(object sender, RoutedEventArgs args)
         {
             
@@ -45,7 +30,7 @@ namespace TalktuahCommunicater1925
             
         }
 
-        public void JoinCustomIP(object sender, RoutedEventArgs args)
+        public void JoinCustomIP(object? sender, RoutedEventArgs args)
         {
             
         }

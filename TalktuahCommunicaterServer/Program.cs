@@ -26,7 +26,7 @@ namespace TalktuahCommunicaterServer
         static void Main(string[] args)
         {
             PORT = 11000;
-            if (args.Length >= 1) { if (!int.TryParse(args[0], out int value)) { PORT = value; } }
+            if (args.Length >= 1) { if (int.TryParse(args[0], out int value)) { PORT = value; } }
 
             CLIENTS = new();
 
@@ -43,13 +43,14 @@ namespace TalktuahCommunicaterServer
         private const byte RECIEVE_CLIENT_LEFT_CODE = 5;
         private const byte LIST_CLIENTS_CODE = 6;
         private const byte RECIEVE_CLIENT_LIST_CODE = 7;
+        private const byte IMAGE_SENT_CODE = 8;
+        private const byte RECIEVE_IMAGE_CODE = 9;
 
         private static int MAX_MESSAGE_LEN;
 
         private static readonly byte[] _magicNumber = { 0xCA, 0xFE, 0xBA, 0xBE };
         private static Socket? SERVER_SOCKET;
         private static List<ConnectedClient>? CLIENTS = new();
-        private static readonly object _lock = new(); // Prevent race conditions
         private static int PORT;
 
         static bool ValidateMagicNumber(byte[] receivedMagic)
@@ -79,7 +80,7 @@ namespace TalktuahCommunicaterServer
             try
             {
                 //start the host here
-                IPEndPoint localEndPoint = new(IPAddress.Any, 11000);
+                IPEndPoint localEndPoint = new(IPAddress.Any, PORT);
                 SERVER_SOCKET = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 SERVER_SOCKET.Bind(localEndPoint);
                 SERVER_SOCKET.Listen(1000);
@@ -220,6 +221,18 @@ namespace TalktuahCommunicaterServer
                             }
                             break;
                         }
+                    case IMAGE_SENT_CODE:
+                        {
+                            buffer[_magicNumber.Length] = RECIEVE_IMAGE_CODE;
+                            byte[] sent = new byte[totallen];
+                            Array.Copy(buffer, sent, totallen);
+                            for (int i = 0; i < CLIENTS.Count; i++)
+                            {
+                                if (CLIENTS[i].ClientDisconnecting) { continue; }
+                                CLIENTS[i].socket.Send(sent);
+                            }
+                            break;
+                        }
                     case CLIENT_LEFT_CODE:
                         Console.WriteLine(Encoding.Unicode.GetString(buffer, 1+_magicNumber.Length, totallen - 2) + " Disconnected");
                         {
@@ -244,6 +257,7 @@ namespace TalktuahCommunicaterServer
                     case RECIEVE_CLIENT_LIST_CODE:
                         //sevrer doesnt need to act pn this
                         break;
+                    case RECIEVE_IMAGE_CODE: break;
                     default:
                         Console.WriteLine("Recieved erroneous message with code " + buffer[_magicNumber.Length] + ", discarding");
                         //TERMINAL.Output("Recieved erroneous message with code " + buffer[0] + ", discarding");

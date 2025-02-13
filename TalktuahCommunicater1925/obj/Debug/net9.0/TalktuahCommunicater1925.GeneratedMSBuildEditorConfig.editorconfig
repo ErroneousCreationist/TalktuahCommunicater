@@ -15,20 +15,20 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = TalktuahCommunicater1925
-build_property.ProjectDir = /Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicater1925/
+build_property.ProjectDir = C:\Users\sam\Documents\Projects\TalktuahCommunications\TalktuahCommunicater1925\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicater1925/App.axaml]
+[C:/Users/sam/Documents/Projects/TalktuahCommunications/TalktuahCommunicater1925/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicater1925/ChatMessageControl.axaml]
+[C:/Users/sam/Documents/Projects/TalktuahCommunications/TalktuahCommunicater1925/ChatMessageControl.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicater1925/ChatWindow.axaml]
+[C:/Users/sam/Documents/Projects/TalktuahCommunications/TalktuahCommunicater1925/ChatWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicater1925/Views/MainWindow.axaml]
+[C:/Users/sam/Documents/Projects/TalktuahCommunications/TalktuahCommunicater1925/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
