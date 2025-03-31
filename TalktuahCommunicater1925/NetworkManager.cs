@@ -27,7 +27,7 @@ namespace TalktuahCommunicater1925
         private const byte RECIEVE_IMAGE_CODE = 9;
 
         private Socket? CLIENT_SOCKET;
-        private static readonly byte[] _magicNumber = [0xCA, 0xFE, 0xBA, 0xBE];
+        private static readonly byte[] _magicNumber = new byte[] [0xCA, 0xFE, 0xBA, 0xBE];
         private static int MAX_MESSAGE_LEN;
 
         public event Action<string, string> TextMessageRecieved; // Event for incoming messages
@@ -182,11 +182,11 @@ namespace TalktuahCommunicater1925
                         TextMessageRecieved?.Invoke(messagesender[0], messagesender[1]);
                         break;
                     case RECIEVE_IMAGE_CODE:
-                        byte[] image = [];
+                        byte[] image = new byte[];
                         string un = "";
                         for (int i = _magicNumber.Length+1; i < buffer.Length; i++)
                         {
-                            var s = Encoding.Unicode.GetString([buffer[i]]);
+                            var s = Encoding.Unicode.GetString(new byte[] [buffer[i]]);
                             if (s == "\0") { image = new byte[buffer.Length - i - 2]; Array.Copy(buffer, i + 1, image, 0, buffer.Length - i - 2); break; }
                             else { un += s; }
                         }

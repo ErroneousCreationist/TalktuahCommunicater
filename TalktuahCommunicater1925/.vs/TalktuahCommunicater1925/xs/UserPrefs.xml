@@ -1,20 +1,28 @@
-﻿<Properties>
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../TalktuahCommunicaterServer/Program.cs">
+﻿<Properties StartupConfiguration="{9104684B-64D4-4093-9501-6A0066C287FA}|Default">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../TalktuahCommunicaterClient/Program.cs">
     <Files>
-      <File FileName="../TalktuahCommunicaterServer/Program.cs" Line="86" Column="57" />
+      <File FileName="../TalktuahCommunicaterServer/Program.cs" Line="86" Column="44" />
+      <File FileName="../TalktuahCommunicaterClient/Program.cs" Line="15" Column="84" />
+      <File FileName="ChatMessage.cs" Line="1" Column="1" />
+      <File FileName="NetworkManager.cs" Line="1" Column="1" />
+      <File FileName="../TalktuahCommunicaterClient/NetworkManager.cs" Line="11" Column="37" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="TalktuahCommunicater1925" expanded="True" />
+          <Node name="TalktuahCommunicater1925" expanded="True">
+            <Node name="TalktuahCommunicater1925" expanded="True" />
+            <Node name="TalktuahCommunicaterClient" selected="True" />
+          </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.TalktuahCommunicaterClient PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>
