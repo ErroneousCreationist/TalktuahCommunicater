@@ -1,0 +1,14 @@
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/bin/Debug/net7.0/TalktuahCommunicaterServer
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/bin/Debug/net7.0/TalktuahCommunicaterServer.deps.json
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/bin/Debug/net7.0/TalktuahCommunicaterServer.runtimeconfig.json
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/bin/Debug/net7.0/TalktuahCommunicaterServer.dll
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/bin/Debug/net7.0/TalktuahCommunicaterServer.pdb
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/TalktuahCommunicaterServer.GeneratedMSBuildEditorConfig.editorconfig
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/TalktuahCommunicaterServer.AssemblyInfoInputs.cache
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/TalktuahCommunicaterServer.AssemblyInfo.cs
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/TalktuahCommunicaterServer.csproj.CoreCompileInputs.cache
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/TalktuahCommunicaterServer.dll
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/refint/TalktuahCommunicaterServer.dll
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/TalktuahCommunicaterServer.pdb
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/TalktuahCommunicaterServer.genruntimeconfig.cache
+/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterServer/obj/Debug/net7.0/ref/TalktuahCommunicaterServer.dll

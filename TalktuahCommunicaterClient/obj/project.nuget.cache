@@ -1,13 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "GL+JX5bQ5ss=",
+  "dgSpecHash": "e+pTmJS6TTGf2pm3TqedbpOjmb/+Llp29dyVx839e7vDB0Hqfh2Zqfwm0lMzFeQ/MS1xtdaW9Nq5vemZ1xnXUA==",
   "success": true,
   "projectFilePath": "/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/TalktuahCommunicaterClient.csproj",
   "expectedPackageFiles": [
-    "/Users/samuel/.nuget/packages/raylib-cs/7.0.1/raylib-cs.7.0.1.nupkg.sha512",
-    "/Users/samuel/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.20/microsoft.aspnetcore.app.ref.7.0.20.nupkg.sha512",
-    "/Users/samuel/.nuget/packages/microsoft.netcore.app.host.osx-arm64/7.0.20/microsoft.netcore.app.host.osx-arm64.7.0.20.nupkg.sha512",
-    "/Users/samuel/.nuget/packages/microsoft.netcore.app.ref/7.0.20/microsoft.netcore.app.ref.7.0.20.nupkg.sha512"
+    "/Users/samuel/.nuget/packages/raylib-cs/7.0.1/raylib-cs.7.0.1.nupkg.sha512"
   ],
   "logs": []
 }

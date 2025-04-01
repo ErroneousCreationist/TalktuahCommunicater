@@ -49,6 +49,7 @@ namespace TalktuahCommunicaterServer
         private static int MAX_MESSAGE_LEN;
 
         private static readonly byte[] _magicNumber = { 0xCA, 0xFE, 0xBA, 0xBE };
+
         private static Socket? SERVER_SOCKET;
         private static List<ConnectedClient>? CLIENTS = new();
         private static int PORT;
@@ -176,7 +177,7 @@ namespace TalktuahCommunicaterServer
                 {
                     case CLIENT_CONNECTED_CODE:
                         {
-                            Console.WriteLine(Encoding.Unicode.GetString(buffer, 1+_magicNumber.Length, totallen - 2) + " Connected");
+                            Console.WriteLine(Encoding.Unicode.GetString(buffer, 1+_magicNumber.Length, totallen - _magicNumber.Length - 2) + " Connected");
                             buffer[_magicNumber.Length] = RECIEVE_CLIENT_JOIN_CODE;
                             byte[] sent = new byte[totallen];
                             Array.Copy(buffer, sent, totallen);
@@ -190,7 +191,6 @@ namespace TalktuahCommunicaterServer
                         }
                     case LIST_CLIENTS_CODE:
                         {
-                            Console.WriteLine("List clients request recieved");
                             string fulllist = "";
                             for (int i = 0; i < CLIENTS.Count; i++)
                             {
@@ -209,7 +209,7 @@ namespace TalktuahCommunicaterServer
                         }
                     case MESSAGE_SENT_CODE:
                         //return all messages to the clients
-                        Console.WriteLine(Encoding.Unicode.GetString(buffer, 1+_magicNumber.Length, totallen - 2)); 
+                        Console.WriteLine(Encoding.Unicode.GetString(buffer, 1+_magicNumber.Length, totallen - _magicNumber.Length - 2).Replace('\0', ':')); 
                         {
                             buffer[_magicNumber.Length] = RECIEVE_MESSAGE_CODE;
                             byte[] sent = new byte[totallen];
@@ -234,7 +234,7 @@ namespace TalktuahCommunicaterServer
                             break;
                         }
                     case CLIENT_LEFT_CODE:
-                        Console.WriteLine(Encoding.Unicode.GetString(buffer, 1+_magicNumber.Length, totallen - 2) + " Disconnected");
+                        Console.WriteLine(Encoding.Unicode.GetString(buffer, 1+_magicNumber.Length, totallen - _magicNumber.Length - 2) + " Disconnected");
                         {
                             buffer[_magicNumber.Length] = RECIEVE_CLIENT_LEFT_CODE;
                             byte[] sent = new byte[totallen];
