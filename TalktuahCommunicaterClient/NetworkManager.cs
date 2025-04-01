@@ -182,10 +182,11 @@ namespace TalktuahCommunicaterClient
         {
             if (CLIENT_SOCKET == null || !CLIENT_SOCKET.Connected) { return; }
 
-            byte[] buffer = new byte[MAX_MESSAGE_LEN];
-            int totallen = 0;
+            
             while (true)
             {
+                byte[] buffer = new byte[MAX_MESSAGE_LEN];
+                int totallen = 0;
                 while (true)
                 {
                     if (CLIENT_SOCKET == null || !CLIENT_SOCKET.Connected) { return; }
