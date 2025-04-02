@@ -2,14 +2,17 @@
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workbench ActiveDocument="../TalktuahCommunicaterClient/Program.cs">
     <Files>
-      <File FileName="../TalktuahCommunicaterClient/Program.cs" Line="400" Column="33" />
-      <File FileName="../TalktuahCommunicaterClient/NetworkManager.cs" Line="37" Column="22" />
+      <File FileName="../TalktuahCommunicaterClient/Program.cs" Line="139" Column="16" />
+      <File FileName="../TalktuahCommunicaterClient/NetworkManager.cs" />
+      <File FileName="../TalktuahCommunicaterServer/Program.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="TalktuahCommunicater1925">
-            <Node name="TalktuahCommunicaterServer" selected="True" />
+          <Node name="TalktuahCommunicater1925" expanded="True">
+            <Node name="TalktuahCommunicaterClient">
+              <Node name="Program.cs" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>

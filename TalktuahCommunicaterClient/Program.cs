@@ -26,7 +26,7 @@ class Program
         public string Sender;
         public string Message;
         public Texture2D Image;
-        public bool IsImage { get { return string.IsNullOrEmpty(Message); } }
+        public readonly bool IsImage => string.IsNullOrEmpty(Message);
 
         public ChatMessage(string sender, string message)
         {
@@ -39,7 +39,7 @@ class Program
             Sender = sender;
             Message = "";
             var temp = Raylib.LoadImageFromMemory(".png", image); //if its not png then KYS lmaooooo
-            Image = Raylib.LoadTextureFromImage(temp);
+            Image = Raylib.LoadTextureFromImage(temp); //it explodes RIGHT HERE with a FUCKING SEGFAULT???
             Raylib.UnloadImage(temp);
         }
     }
@@ -84,6 +84,8 @@ class Program
 
     static void Main(string[] args)
     {
+        Console.OutputEncoding = System.Text.Encoding.Unicode;
+
         //init stuff
         Raylib.InitWindow(SCREENWIDTH, SCREENHEIGHT, $"Talktuah Communicater Client {VERSION}");
         Raylib.SetTargetFPS(60);

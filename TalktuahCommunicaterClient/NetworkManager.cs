@@ -29,10 +29,10 @@ namespace TalktuahCommunicaterClient
         private static int MAX_MESSAGE_LEN;
         private string currUsername;
 
-        public static event Action<string, string> TextMessageRecieved; // Event for incoming messages
-        public static event Action<string, byte[]> ImageMessageRecieved;
-        public static event Action OnConnected;
-        public static event Action OnDisconnected;
+        public static Action<string, string> TextMessageRecieved; // Event for incoming messages
+        public static Action<string, byte[]> ImageMessageRecieved;
+        public static Action OnConnected;
+        public static Action OnDisconnected;
         public static Action<string> SendMessage; //this is for networkmanager, called by program
         public static Action<byte[]> SendImage; //same as above
         public static Action Close;
@@ -72,7 +72,7 @@ namespace TalktuahCommunicaterClient
                     {
                         emojislist += key + ", ";
                         currline += key + ", ";
-                        if(currline.Length >= 80) { emojislist = emojislist[..^2]; emojislist += "\n"; currline = ""; }
+                        if(currline.Length >= 120) { emojislist = emojislist[..^2]; emojislist += "\n"; currline = ""; }
                     }
                     if (emojislist[^1] == ' ') { emojislist = emojislist[..^2]; }
                     TextMessageRecieved?.Invoke("Server", emojislist);
@@ -108,14 +108,29 @@ namespace TalktuahCommunicaterClient
 
         private void sendImage(byte[] image)
         {
-            byte[] message = Encoding.Unicode.GetBytes(currUsername + "\0");
-            var final = new byte[_magicNumber.Length + 1 + message.Length + image.Length + 1];
-            Array.Copy(_magicNumber, 0, final, 0, _magicNumber.Length);
-            final[_magicNumber.Length] = IMAGE_SENT_CODE;
-            Array.Copy(message, 0, final, _magicNumber.Length + 1, message.Length);
-            Array.Copy(image, 0, final, _magicNumber.Length + 1 + message.Length + 1, image.Length);
-            final[^1] = (byte)'\r';
-            int _ = CLIENT_SOCKET.Send(final);
+            byte[] message = Encoding.Unicode.GetBytes(currUsername);
+            byte[] separator = new byte[] { 0xAB, 0xFF, 0xCD, 0xFF }; // Unique separator
+            var final = new List<byte>();
+            foreach (var byt in _magicNumber)
+            {
+                final.Add(byt);
+            }
+            final.Add(IMAGE_SENT_CODE);
+            foreach (var byt in message)
+            {
+                final.Add(byt);
+            }
+            Console.WriteLine("separator first byte at " + final.Count);
+            foreach (var byt in separator)
+            {
+                final.Add(byt);
+            }
+            foreach (var byt in image)
+            {
+                final.Add(byt);
+            }
+            final.Add((byte)'\r');
+            int _ = CLIENT_SOCKET.Send(final.ToArray());
         }
 
         private void close()
@@ -255,13 +270,6 @@ namespace TalktuahCommunicaterClient
                     return;
                 }
 
-                foreach (var byt in buffer)
-                {
-                    if(byt == '\r') { Console.Write("\n"); break; }
-                    Console.Write(byt+" ");
-                }
-
-                //why the nigg is it always 4
                 switch (buffer[_magicNumber.Length]) //first byte of any message is the identifier no its fucking not dipshit
                 {
                     case CLIENT_CONNECTED_CODE:
@@ -286,20 +294,42 @@ namespace TalktuahCommunicaterClient
                         break;
                     case RECIEVE_MESSAGE_CODE:
                         var messagesender = Encoding.Unicode.GetString(buffer, _magicNumber.Length + 1, totallen - 2 - _magicNumber.Length).Split('\0'); //sender and message delineated by \0
-                        Console.WriteLine(messagesender[0] + " " + messagesender[1]);
                         TextMessageRecieved?.Invoke(messagesender[0], messagesender[1]);
                         break;
+                    //this is FUCKING HORRIBLE BRO
                     case RECIEVE_IMAGE_CODE:
-                        byte[] image = Array.Empty<byte>();
-                        string un = "";
-                        for (int i = _magicNumber.Length + 1; i < buffer.Length; i++)
+                        byte[] separator = new byte[] { 0xAB, 0xFF, 0xCD, 0xFF };
+                        int index = _magicNumber.Length + 1; // Skip magic number and type byte
+
+                        // Find separator position
+                        int sepIndex = -1;
+                        for (int i = index; i < totallen - separator.Length; i++)
                         {
-                            var s = Encoding.Unicode.GetString(new byte[] { buffer[i] });
-                        
-                            if (s == "\0") { image = new byte[buffer.Length - i - 2]; Array.Copy(buffer, i + 1, image, 0, buffer.Length - i - 2); break; }
-                            else { un += s; }
+                            if (buffer[i] == separator[0] && buffer[i + 1] == separator[1] &&
+                                buffer[i + 2] == separator[2] && buffer[i + 3] == separator[3])
+                            {
+                                sepIndex = i;
+                                break;
+                            }
                         }
-                        ImageMessageRecieved?.Invoke(un, image);
+
+                        if (sepIndex == -1)
+                            throw new Exception("Separator not found!");
+
+                        // Extract username
+                        byte[] usernameBytes = new byte[sepIndex - index];
+                        Array.Copy(buffer, index, usernameBytes, 0, usernameBytes.Length);
+                        string un = Encoding.Unicode.GetString(usernameBytes);
+                        Console.WriteLine("un: " + un);
+
+                        // Extract image data
+                        int imgStart = sepIndex + separator.Length;
+                        int imgLength = totallen - imgStart - 1; // Exclude end byte ('\r')
+
+                        byte[] imageData = new byte[imgLength];
+                        Console.WriteLine("img length " + imgLength);
+                        Array.Copy(buffer, imgStart, imageData, 0, imgLength);
+                        ImageMessageRecieved?.Invoke(un, imageData);
                         break;
                     case RECIEVE_CLIENT_LIST_CODE:
                         string list = Encoding.Unicode.GetString(buffer, 1 + _magicNumber.Length, totallen - 2 - _magicNumber.Length).Replace("\\", ", ");

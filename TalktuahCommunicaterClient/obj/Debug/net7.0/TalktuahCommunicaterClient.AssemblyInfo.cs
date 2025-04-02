@@ -10,6 +10,7 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("eb9a3b21-eae4-4430-8dd4-dfa9f7e7fbb1")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("TalktuahCommunicaterClient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]

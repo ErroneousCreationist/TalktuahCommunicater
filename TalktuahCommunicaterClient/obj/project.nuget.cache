@@ -1,9 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "e+pTmJS6TTGf2pm3TqedbpOjmb/+Llp29dyVx839e7vDB0Hqfh2Zqfwm0lMzFeQ/MS1xtdaW9Nq5vemZ1xnXUA==",
+  "dgSpecHash": "TxFkPRPytCCLDDiiOKqLPi4E0cd5aRH2Z3UlFLXNla5VxUY4EU5GGzqWiEagWc2Wq4ExCPB4s2ABYiDdDUTQ1w==",
   "success": true,
   "projectFilePath": "/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/TalktuahCommunicaterClient.csproj",
   "expectedPackageFiles": [
+    "/Users/samuel/.nuget/packages/microsoft.extensions.configuration/5.0.0/microsoft.extensions.configuration.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.configuration.abstractions/5.0.0/microsoft.extensions.configuration.abstractions.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.configuration.fileextensions/5.0.0/microsoft.extensions.configuration.fileextensions.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.configuration.json/5.0.0/microsoft.extensions.configuration.json.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.configuration.usersecrets/5.0.0/microsoft.extensions.configuration.usersecrets.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.fileproviders.abstractions/5.0.0/microsoft.extensions.fileproviders.abstractions.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.fileproviders.physical/5.0.0/microsoft.extensions.fileproviders.physical.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.filesystemglobbing/5.0.0/microsoft.extensions.filesystemglobbing.5.0.0.nupkg.sha512",
+    "/Users/samuel/.nuget/packages/microsoft.extensions.primitives/5.0.0/microsoft.extensions.primitives.5.0.0.nupkg.sha512",
     "/Users/samuel/.nuget/packages/raylib-cs/7.0.1/raylib-cs.7.0.1.nupkg.sha512"
   ],
   "logs": []
