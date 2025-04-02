@@ -19,6 +19,8 @@ class Program
     static string currUsername = "", currMessage= "";
     static string currIP = "", currPort = "";
 
+    public static Dictionary<string, byte[]> EMOJIS = new();
+
     private struct ChatMessage
     {
         public string Sender;
@@ -87,9 +89,19 @@ class Program
         Raylib.SetTargetFPS(60);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) { ChangeWorkingDirectory(); } //fix the issue on mac weird
         Raylib.SetExitKey(KeyboardKey.Null);
-        font1 = Raylib.LoadFont("font1.otf");
-        font2 = Raylib.LoadFont("font2.otf");
-        font3 = Raylib.LoadFont("font3.ttf");
+
+        //load resources
+        font1 = Raylib.LoadFont("resources/font1.otf");
+        font2 = Raylib.LoadFont("resources/font2.otf");
+        font3 = Raylib.LoadFont("resources/font3.ttf");
+        EMOJIS = new();
+        foreach (var item in Directory.EnumerateFiles(AppContext.BaseDirectory + "/resources/emojis"))
+        {
+            if (EMOJIS.ContainsKey(Path.GetFileName(item).Split(".")[0].ToLower().Replace(" ", "").Replace("-", ""))) { continue; }
+            //Console.WriteLine(item + " \\ "+ )
+            EMOJIS.Add(Path.GetFileName(item).Split(".")[0].ToLower().Replace(" ", "").Replace("-", ""), File.ReadAllBytes(item)); //add the emoji name to the list
+        }
+
         int currentScroll = 0;
 
         //events

@@ -62,9 +62,36 @@ namespace TalktuahCommunicaterClient
                 final[^1] = (byte)'\r';
                 int _ = CLIENT_SOCKET.Send(final);
             }
+            else if (CurrText.Split(' ')[0] == "/emoji")
+            {
+                if (CurrText.Split(' ')[1] == "list")
+                {
+                    string emojislist = "";
+                    string currline = "";
+                    foreach (var key in Program.EMOJIS.Keys)
+                    {
+                        emojislist += key + ", ";
+                        currline += key + ", ";
+                        if(currline.Length >= 80) { emojislist = emojislist[..^2]; emojislist += "\n"; currline = ""; }
+                    }
+                    if (emojislist[^1] == ' ') { emojislist = emojislist[..^2]; }
+                    TextMessageRecieved?.Invoke("Server", emojislist);
+                }
+                else if (!Program.EMOJIS.ContainsKey(CurrText.Split(' ')[1])) { TextMessageRecieved?.Invoke("Client", "No emoji called " + CurrText.Split(' ')[1]); }
+                else
+                {
+                    var emoji = Program.EMOJIS[CurrText.Split(' ')[1]];
+                    var final = new byte[_magicNumber.Length + emoji.Length + 2];
+                    Array.Copy(_magicNumber, 0, final, 0, _magicNumber.Length);
+                    final[_magicNumber.Length] = IMAGE_SENT_CODE;
+                    Array.Copy(emoji, 0, final, _magicNumber.Length + 1, emoji.Length);
+                    final[^1] = (byte)'\r';
+                    int _ = CLIENT_SOCKET.Send(final);
+                }
+            }
             else if (CurrText == "/help")
             {
-                TextMessageRecieved?.Invoke("Server", "LIST OF COMMANDS: \n/list - lists connected clients");
+                TextMessageRecieved?.Invoke("Server", "LIST OF COMMANDS: \n/list - lists connected clients\n/emoji <emoji> - sends an emoji, like 'fire' or 'nerd'\n/emoji list - lists all emojis (pretty long)");
             }
             //send a message
             else
