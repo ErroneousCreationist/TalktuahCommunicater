@@ -20,9 +20,6 @@
 /Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/obj/Debug/net7.0/TalktuahCommunicaterClient.pdb
 /Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/obj/Debug/net7.0/TalktuahCommunicaterClient.genruntimeconfig.cache
 /Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/obj/Debug/net7.0/ref/TalktuahCommunicaterClient.dll
-/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/bin/Debug/net7.0/SharpTalk.dll
-/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/bin/Debug/net7.0/SharpTalk.pdb
-/Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/bin/Debug/net7.0/SharpTalk.xml
 /Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/bin/Debug/net7.0/Microsoft.Extensions.Configuration.dll
 /Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/bin/Debug/net7.0/Microsoft.Extensions.Configuration.Abstractions.dll
 /Users/samuel/Documents/GitHub/TalktuahCommunicater/TalktuahCommunicaterClient/bin/Debug/net7.0/Microsoft.Extensions.Configuration.FileExtensions.dll

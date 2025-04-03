@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Raylib_cs;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TalktuahCommunicaterClient;
 
@@ -25,6 +26,8 @@ class Program
     {
         public string Sender;
         public string Message;
+        public byte[] TempImage;
+        public bool InitiatedImage;
         public Texture2D Image;
         public readonly bool IsImage => string.IsNullOrEmpty(Message);
 
@@ -38,9 +41,8 @@ class Program
         {
             Sender = sender;
             Message = "";
-            var temp = Raylib.LoadImageFromMemory(".png", image); //if its not png then KYS lmaooooo
-            Image = Raylib.LoadTextureFromImage(temp); //it explodes RIGHT HERE with a FUCKING SEGFAULT???
-            Raylib.UnloadImage(temp);
+            TempImage = image;
+            InitiatedImage = false;
         }
     }
 
@@ -336,28 +338,38 @@ class Program
                         int finalheight = 0;
                         for (int i = 0; i < MESSAGES.Count; i++)
                         {
-                            var message = MESSAGES[i];
                             var bottomcorner = new Vector2(50, SCREENHEIGHT - 70 - currHeight + currentScroll); //bottom left
                             //if(bottomcorner.Y <= 0) { continue; } //dont draw if we dont need to
-                            var usernamesize = Raylib.MeasureTextEx(font3, message.Sender, 30, 1);
+                            var usernamesize = Raylib.MeasureTextEx(font3, MESSAGES[i].Sender, 30, 1);
 
-                            if (message.IsImage)
+                            if (MESSAGES[i].IsImage)
                             {
+                                if (!MESSAGES[i].InitiatedImage)
+                                {
+                                    var message = MESSAGES[i];
+                                    var tempimg = Raylib.LoadImageFromMemory(".png", MESSAGES[i].TempImage); //if its not png then KYS lmaooooo
+                                    message.Image = Raylib.LoadTextureFromImage(tempimg); //it explodes RIGHT HERE with a FUCKING SEGFAULT???
+                                    Raylib.UnloadImage(tempimg);
+                                    message.InitiatedImage = true;
+                                    message.TempImage = Array.Empty<byte>();
+                                    MESSAGES[i] = message;
+                                }
+
                                 Raylib.DrawTriangle(new Vector2(bottomcorner.X - 5, bottomcorner.Y + 5), new Vector2(bottomcorner.X - 5, bottomcorner.Y - 25), new Vector2(20, bottomcorner.Y - 10), Color.Lime);
-                                Raylib.DrawRectangle((int)bottomcorner.X - 5, (int)bottomcorner.Y - message.Image.Height - (int)usernamesize.Y - 5, (int)MathF.Max(message.Image.Width, usernamesize.X) + 10, (int)usernamesize.Y + message.Image.Height + 10, Color.Lime);
-                                Raylib.DrawTexture(message.Image, 50, (int)bottomcorner.Y - message.Image.Height, Color.White);
-                                Raylib.DrawTextEx(font3, message.Sender, new Vector2(50, bottomcorner.Y - message.Image.Height - usernamesize.Y), 30, 1, Color.Black);
-                                currHeight += message.Image.Height + (int)usernamesize.Y + 30;
-                                if(i == MESSAGES.Count - 1) { finalheight = message.Image.Height + (int)usernamesize.Y + 30; }
+                                Raylib.DrawRectangle((int)bottomcorner.X - 5, (int)bottomcorner.Y - MESSAGES[i].Image.Height - (int)usernamesize.Y - 5, (int)MathF.Max(MESSAGES[i].Image.Width, usernamesize.X) + 10, (int)usernamesize.Y + MESSAGES[i].Image.Height + 10, Color.Lime);
+                                Raylib.DrawTexture(MESSAGES[i].Image, 50, (int)bottomcorner.Y - MESSAGES[i].Image.Height, Color.White);
+                                Raylib.DrawTextEx(font3, MESSAGES[i].Sender, new Vector2(50, bottomcorner.Y - MESSAGES[i].Image.Height - usernamesize.Y), 30, 1, Color.Black);
+                                currHeight += MESSAGES[i].Image.Height + (int)usernamesize.Y + 30;
+                                if(i == MESSAGES.Count - 1) { finalheight = MESSAGES[i].Image.Height + (int)usernamesize.Y + 30; }
                             }
                             else
                             {
-                                var messagesize = Raylib.MeasureTextEx(font3, message.Message, 30, 1);
+                                var messagesize = Raylib.MeasureTextEx(font3, MESSAGES[i].Message, 30, 1);
 
                                 Raylib.DrawTriangle(new Vector2(bottomcorner.X - 5, bottomcorner.Y + 5), new Vector2(bottomcorner.X - 5, bottomcorner.Y - 25), new Vector2(20, bottomcorner.Y - 10), Color.Lime);
                                 Raylib.DrawRectangle((int)bottomcorner.X - 5, (int)bottomcorner.Y - (int)messagesize.Y - (int)usernamesize.Y - 5, (int)MathF.Max(messagesize.X, usernamesize.X)+10, (int)usernamesize.Y+(int)messagesize.Y+10, Color.Lime);
-                                Raylib.DrawTextEx(font3, message.Sender, new Vector2(50, bottomcorner.Y - messagesize.Y - usernamesize.Y), 30, 1, Color.Black);
-                                Raylib.DrawTextEx(font3, message.Message, new Vector2(50, bottomcorner.Y - messagesize.Y), 30, 1, Color.Black);
+                                Raylib.DrawTextEx(font3, MESSAGES[i].Sender, new Vector2(50, bottomcorner.Y - messagesize.Y - usernamesize.Y), 30, 1, Color.Black);
+                                Raylib.DrawTextEx(font3, MESSAGES[i].Message, new Vector2(50, bottomcorner.Y - messagesize.Y), 30, 1, Color.Black);
                                 currHeight += (int)messagesize.Y + (int)usernamesize.Y + 30;
                                 if (i == MESSAGES.Count - 1) { finalheight = (int)messagesize.Y + (int)usernamesize.Y + 30; }
                             }
