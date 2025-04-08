@@ -23,11 +23,13 @@ namespace TalktuahCommunicaterClient
         private const byte RECIEVE_CLIENT_LIST_CODE = 7;
         private const byte IMAGE_SENT_CODE = 8;
         private const byte RECIEVE_IMAGE_CODE = 9;
+        public const byte PING_CODE = 10;
 
         private Socket? CLIENT_SOCKET;
-        private static readonly byte[] _magicNumber = new byte[] { 0xCA, 0xFE, 0xBA, 0xBE };
-        private static int MAX_MESSAGE_LEN;
+        public static readonly byte[] _magicNumber = new byte[] { 0xCA, 0xFE, 0xBA, 0xBE };
+        public static int MAX_MESSAGE_LEN;
         private string currUsername;
+        private bool DISCONNECTED = false;
 
         public static Action<string, string> TextMessageRecieved; // Event for incoming messages
         public static Action<string, byte[]> ImageMessageRecieved;
@@ -72,21 +74,34 @@ namespace TalktuahCommunicaterClient
                     {
                         emojislist += key + ", ";
                         currline += key + ", ";
-                        if(currline.Length >= 120) { emojislist = emojislist[..^2]; emojislist += "\n"; currline = ""; }
+                        if(currline.Length >= 110) { emojislist = emojislist[..^2]; emojislist += "\n"; currline = ""; }
                     }
                     if (emojislist[^1] == ' ') { emojislist = emojislist[..^2]; }
-                    TextMessageRecieved?.Invoke("Server", emojislist);
+                    TextMessageRecieved?.Invoke("Client", emojislist);
                 }
                 else if (!Program.EMOJIS.ContainsKey(CurrText.Split(' ')[1])) { TextMessageRecieved?.Invoke("Client", "No emoji called " + CurrText.Split(' ')[1]); }
                 else
                 {
+                    byte[] message = Encoding.Unicode.GetBytes(currUsername);
                     var emoji = Program.EMOJIS[CurrText.Split(' ')[1]];
-                    var final = new byte[_magicNumber.Length + emoji.Length + 2];
-                    Array.Copy(_magicNumber, 0, final, 0, _magicNumber.Length);
-                    final[_magicNumber.Length] = IMAGE_SENT_CODE;
-                    Array.Copy(emoji, 0, final, _magicNumber.Length + 1, emoji.Length);
-                    final[^1] = (byte)'\r';
-                    int _ = CLIENT_SOCKET.Send(final);
+                    var final = new List<byte>();
+                    foreach (var byt in _magicNumber)
+                    {
+                        final.Add(byt);
+                    }
+                    final.Add(IMAGE_SENT_CODE);
+                    final.Add((byte)(message.Length + _magicNumber.Length + 2));
+                    foreach (var byt in message)
+                    {
+                        final.Add(byt);
+                    }
+                    
+                    foreach (var byt in emoji)
+                    {
+                        final.Add(byt);
+                    }
+                    final.Add((byte)'\r');
+                    int _ = CLIENT_SOCKET.Send(final.ToArray());
                 }
             }
             else if (CurrText == "/help")
@@ -109,19 +124,14 @@ namespace TalktuahCommunicaterClient
         private void sendImage(byte[] image)
         {
             byte[] message = Encoding.Unicode.GetBytes(currUsername);
-            byte[] separator = new byte[] { 0xAB, 0xFF, 0xCD, 0xFF }; // Unique separator
             var final = new List<byte>();
             foreach (var byt in _magicNumber)
             {
                 final.Add(byt);
             }
             final.Add(IMAGE_SENT_CODE);
+            final.Add((byte)(message.Length + _magicNumber.Length + 2));
             foreach (var byt in message)
-            {
-                final.Add(byt);
-            }
-            Console.WriteLine("separator first byte at " + final.Count);
-            foreach (var byt in separator)
             {
                 final.Add(byt);
             }
@@ -135,6 +145,7 @@ namespace TalktuahCommunicaterClient
 
         private void close()
         {
+            DISCONNECTED = true;
             if (CLIENT_SOCKET == null) { return; }
             var message = Encoding.Unicode.GetBytes(currUsername);
             var final = new byte[_magicNumber.Length + message.Length + 2];
@@ -146,6 +157,7 @@ namespace TalktuahCommunicaterClient
             CLIENT_SOCKET.Shutdown(SocketShutdown.Both);
             CLIENT_SOCKET.Close();
             CLIENT_SOCKET = null;
+            OnDisconnected?.Invoke();
         }
 
         public NetworkManager(string ip, int port, string username)
@@ -176,11 +188,11 @@ namespace TalktuahCommunicaterClient
                 bool valid = IPAddress.TryParse(ip, out IPAddress? tempaddress);
                 if (!valid) { return; }
                 else { address = tempaddress; }
-
-                Ping ping = new();
-                var pr = ping.Send(address);
-                if (pr.Status != IPStatus.Success) { return; }
             }
+
+            Ping ping = new();
+            var pr = ping.Send(address);
+            if (pr.Status != IPStatus.Success) { return; }
 
             //try to open a connection to the target
             try
@@ -223,7 +235,7 @@ namespace TalktuahCommunicaterClient
         private void Client_ListenForMessage(string username)
         {
             if (CLIENT_SOCKET == null || !CLIENT_SOCKET.Connected) { return; }
-
+            if (DISCONNECTED) { return; }
             
             while (true)
             {
@@ -252,6 +264,7 @@ namespace TalktuahCommunicaterClient
                     }
                     catch
                     {
+                        if (CLIENT_SOCKET == null) { return; }
                         if (CLIENT_SOCKET.Connected) { CLIENT_SOCKET.Disconnect(false); }
                         CLIENT_SOCKET.Shutdown(SocketShutdown.Both);
                         CLIENT_SOCKET.Close();
@@ -298,37 +311,22 @@ namespace TalktuahCommunicaterClient
                         break;
                     //this is FUCKING HORRIBLE BRO
                     case RECIEVE_IMAGE_CODE:
-                        byte[] separator = new byte[] { 0xAB, 0xFF, 0xCD, 0xFF };
-                        int index = _magicNumber.Length + 1; // Skip magic number and type byte
-
+                        var index = _magicNumber.Length + 2;
                         // Find separator position
-                        int sepIndex = -1;
-                        for (int i = index; i < totallen - separator.Length; i++)
-                        {
-                            if (buffer[i] == separator[0] && buffer[i + 1] == separator[1] &&
-                                buffer[i + 2] == separator[2] && buffer[i + 3] == separator[3])
-                            {
-                                sepIndex = i;
-                                break;
-                            }
-                        }
-
-                        if (sepIndex == -1)
-                            throw new Exception("Separator not found!");
+                        int sepIndex = buffer[_magicNumber.Length+1];
 
                         // Extract username
-                        byte[] usernameBytes = new byte[sepIndex - index];
+                        byte[] usernameBytes = new byte[sepIndex - _magicNumber.Length - 2];
                         Array.Copy(buffer, index, usernameBytes, 0, usernameBytes.Length);
                         string un = Encoding.Unicode.GetString(usernameBytes);
-                        Console.WriteLine("un: " + un);
 
                         // Extract image data
-                        int imgStart = sepIndex + separator.Length;
-                        int imgLength = totallen - imgStart - 1; // Exclude end byte ('\r')
+                        int imgLength = totallen - sepIndex - 1; // Exclude end byte ('\r') correct
+
+                        //Console.WriteLine("Sep index: " + sepIndex + " username length: "+usernameBytes.Length + " image length: "+imgLength);
 
                         byte[] imageData = new byte[imgLength];
-                        Console.WriteLine("img length " + imgLength);
-                        Array.Copy(buffer, imgStart, imageData, 0, imgLength);
+                        Array.Copy(buffer, sepIndex, imageData, 0, imgLength);
                         ImageMessageRecieved?.Invoke(un, imageData);
                         break;
                     case RECIEVE_CLIENT_LIST_CODE:

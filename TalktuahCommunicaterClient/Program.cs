@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Text;
 using Raylib_cs;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TalktuahCommunicaterClient;
 
@@ -19,6 +22,9 @@ class Program
     private static ScreenEnum screen;
     static string currUsername = "", currMessage= "";
     static string currIP = "", currPort = "";
+    private static bool pingingcustom = false;
+    private static int pingingservers = 0;
+    private static string currpolcount = "0", currgencount = "0", currcustomcount = "0";
 
     public static Dictionary<string, byte[]> EMOJIS = new();
 
@@ -117,11 +123,12 @@ class Program
         //menu shit
         var polchatbuttonpos = new Vector2(SCREENWIDTH / 2 - 150, 120);
         var genchatbuttonpos = new Vector2(SCREENWIDTH / 2 - 150, 190);
-        var ranchatbuttonpos = new Vector2(SCREENWIDTH / 2 - 150, 260);
+        var refreshbuttonpos = new Vector2(SCREENWIDTH / 2 - 150, 260);
         var usernamepos = new Vector2(SCREENWIDTH / 2 - 250, 330);
         var ippos = new Vector2(SCREENWIDTH / 2 - 150, 400);
         var portpos = new Vector2(SCREENWIDTH / 2 - 150, 470);
         var joinpos = new Vector2(SCREENWIDTH / 2 - 150, 540);
+        var pingbuttonpos = new Vector2(SCREENWIDTH / 2 -150, 610);
         int selectedfieldindex = -1;
 
         var rand = new Random();
@@ -210,52 +217,52 @@ class Program
 
                         //political chat
                         {
-                            polchatbuttonpos += randDirs[0] * 30f / 60;
+                            polchatbuttonpos += randDirs[0] * 10f / 60;
                             if(polchatbuttonpos.X + 300 > SCREENWIDTH || polchatbuttonpos.X < 0 || polchatbuttonpos.Y + 50 > SCREENHEIGHT || polchatbuttonpos.Y < 0) { randDirs[0] = Rotate(randDirs[0], double.Pi/2); }
                             var rect = new Rectangle(polchatbuttonpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
                             Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
                             Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering ? Color.Lime : Color.Black);
-                            DrawText("Join Politicool", font1, RectCentre(rect), 35, Color.Black);
+                            DrawText($"Join Politicool ({currpolcount})", font3, RectCentre(rect), 35, Color.Black);
 
                             //todo join!!!
                         }
 
                         //genreal chat
                         {
-                            genchatbuttonpos += randDirs[1] * 30f/ 60;
+                            genchatbuttonpos += randDirs[1] * 10f/ 60;
                             if (genchatbuttonpos.X + 300 > SCREENWIDTH || genchatbuttonpos.X < 0 || genchatbuttonpos.Y + 50 > SCREENHEIGHT || genchatbuttonpos.Y < 0) { randDirs[1] = Rotate(randDirs[1], double.Pi/2); }
                             var rect = new Rectangle(genchatbuttonpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
                             Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
                             Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering ? Color.Lime : Color.Black);
-                            DrawText("Join Genreal", font1, RectCentre(rect), 40, Color.Black);
+                            DrawText($"Join Genreal ({currgencount})", font3, RectCentre(rect), 40, Color.Black);
 
                             //todo JOIN!!!
                         }
 
-                        //randoom chat
+                        //refresh counts
                         {
-                            ranchatbuttonpos += randDirs[2] * 30f / 60;
-                            if (ranchatbuttonpos.X + 300 > SCREENWIDTH || ranchatbuttonpos.X < 0 || ranchatbuttonpos.Y + 50 > SCREENHEIGHT || ranchatbuttonpos.Y < 0) { randDirs[2] = Rotate(randDirs[2], double.Pi/2); }
-                            var rect = new Rectangle(ranchatbuttonpos, 300, 50);
+                            refreshbuttonpos += randDirs[2] * 10f / 60;
+                            if (refreshbuttonpos.X + 300 > SCREENWIDTH || refreshbuttonpos.X < 0 || refreshbuttonpos.Y + 50 > SCREENHEIGHT || refreshbuttonpos.Y < 0) { randDirs[2] = Rotate(randDirs[2], double.Pi / 2); }
+                            var rect = new Rectangle(refreshbuttonpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
                             Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
                             Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering ? Color.Lime : Color.Black);
-                            DrawText("Join Randoom", font1, RectCentre(rect), 40, Color.Black);
+                            DrawText("Refresh Counts", font3, RectCentre(rect), 40, Color.Black);
 
-                            //todo JOIN!!!
+                            //todo REFRESH!!!
                         }
 
                         //username field
                         {
-                            usernamepos += randDirs[3] * 30f / 60;
+                            usernamepos += randDirs[3] * 10f / 60;
                             if (usernamepos.X + 500 > SCREENWIDTH || usernamepos.X < 0 || usernamepos.Y + 50 > SCREENHEIGHT || usernamepos.Y < 0) { randDirs[3] = Rotate(randDirs[3], double.Pi/2); }
                             var rect = new Rectangle(usernamepos, 500, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
                             Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
                             Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering||selectedfieldindex==0 ? Color.Lime : Color.Black);
-                            if(currUsername == "") { DrawText("enter username...", font1, RectCentre(rect), 40, Color.Black); }
+                            if(currUsername == "") { DrawText("enter username...", font3, RectCentre(rect), 40, Color.Black); }
                             else { DrawText(currUsername, font3, RectCentre(rect), 40, Color.Black); }
                             if (hovering && Raylib.IsMouseButtonPressed(MouseButton.Left)) { selectedfieldindex = selectedfieldindex == 0 ?  -1 :  0; }
 
@@ -265,19 +272,20 @@ class Program
                                 if (stuff.Count > 0) { currUsername += new string(stuff.ToArray()); }
                                 if (Raylib.IsKeyPressed(KeyboardKey.Enter)) { selectedfieldindex = -1; }
                                 if (Raylib.IsKeyPressed(KeyboardKey.Backspace) && currUsername.Length > 0) { currUsername = currUsername[..^1]; }
-                                if ((Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl)) && Raylib.IsKeyPressed(KeyboardKey.V)) { currUsername += Raylib.GetClipboardText_(); }
+                                if ((Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl)) && Raylib.IsKeyPressed(KeyboardKey.V)) { currUsername += Raylib.GetClipboardText_().Replace("\0", "").Replace("\n", "").Replace("\r", ""); }
+                                if(currUsername.Length > 40) { currUsername = currUsername[..40]; }
                             }
                         }
 
                         //IP field
                         {
-                            ippos += randDirs[4] * 30f / 60;
+                            ippos += randDirs[4] * 10f / 60;
                             if (ippos.X + 300 > SCREENWIDTH || ippos.X < 0 || ippos.Y + 50 > SCREENHEIGHT || ippos.Y < 0) { randDirs[4] = Rotate(randDirs[4], double.Pi/2); ; }
                             var rect = new Rectangle(ippos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
                             Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
                             Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering || selectedfieldindex == 1 ? Color.Lime : Color.Black);
-                            if (currIP == "") { DrawText("enter IP...", font1, RectCentre(rect), 35, Color.Black); }
+                            if (currIP == "") { DrawText("enter IP...", font3, RectCentre(rect), 35, Color.Black); }
                             else { DrawText(currIP, font3, RectCentre(rect), 35, Color.Black); }
                             if (hovering && Raylib.IsMouseButtonPressed(MouseButton.Left)) { selectedfieldindex = selectedfieldindex == 1 ? -1 : 1; }
 
@@ -293,15 +301,15 @@ class Program
 
                         //Port field
                         {
-                            portpos += randDirs[6] * 30f / 60;
+                            portpos += randDirs[6] * 10f / 60;
                             if (portpos.X + 300 > SCREENWIDTH || portpos.X < 0 || portpos.Y + 50 > SCREENHEIGHT || portpos.Y < 0) { randDirs[6] = Rotate(randDirs[6], double.Pi / 2); ; }
                             var rect = new Rectangle(portpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
                             Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
                             Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering || selectedfieldindex == 2 ? Color.Lime : Color.Black);
-                            if (currPort == "") { DrawText("enter port...", font1, RectCentre(rect), 35, Color.Black); }
+                            if (currPort == "") { DrawText("enter port...", font3, RectCentre(rect), 35, Color.Black); }
                             else { DrawText(currPort, font3, RectCentre(rect), 35, Color.Black); }
-                            if (hovering && Raylib.IsMouseButtonPressed(MouseButton.Left)) { selectedfieldindex = selectedfieldindex == 1 ? -1 : 2; }
+                            if (hovering && Raylib.IsMouseButtonPressed(MouseButton.Left)) { selectedfieldindex = selectedfieldindex == 2 ? -1 : 2; }
 
                             if (selectedfieldindex == 2)
                             {
@@ -315,17 +323,33 @@ class Program
 
                         //join custom
                         {
-                            joinpos += randDirs[5] * 30f / 60;
+                            joinpos += randDirs[5] * 10f / 60;
                             if (joinpos.X + 300 > SCREENWIDTH || joinpos.X < 0 || joinpos.Y + 50 > SCREENHEIGHT || joinpos.Y < 0) { randDirs[5] = Rotate(randDirs[5], double.Pi / 2); }
                             var rect = new Rectangle(joinpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
                             Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
                             Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering ? Color.Lime : Color.Black);
-                            DrawText("Join Custom", font1, RectCentre(rect), 40, Color.Black);
+                            DrawText($"Join Custom ({(pingingcustom ? "..." : currcustomcount)})", font3, RectCentre(rect), 40, Color.Black);
 
                             if(Raylib.IsMouseButtonPressed(MouseButton.Left) && hovering)
                             {
                                 JoinRoom(currIP, currPort);
+                            }
+                        }
+
+                        //query custom
+                        {
+                            pingbuttonpos += randDirs[6] * 10f / 60;
+                            if (pingbuttonpos.X + 300 > SCREENWIDTH || pingbuttonpos.X < 0 || pingbuttonpos.Y + 50 > SCREENHEIGHT || pingbuttonpos.Y < 0) { randDirs[6] = Rotate(randDirs[6], double.Pi / 2); }
+                            var rect = new Rectangle(pingbuttonpos, 300, 50);
+                            bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
+                            Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
+                            Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 10, hovering ? Color.Lime : Color.Black);
+                            DrawText(pingingcustom ? "Pinging..." : "Query Server", font3, RectCentre(rect), 40, Color.Black);
+
+                            if (Raylib.IsMouseButtonPressed(MouseButton.Left) && hovering && !pingingcustom && int.TryParse(currPort, out int finalport) && (IPAddress.TryParse(currIP, out IPAddress _) || currIP=="localhost"))
+                            {
+                                PingServerAsync(currIP, finalport+1, true, 0);
                             }
                         }
 
@@ -348,7 +372,7 @@ class Program
                                 {
                                     var message = MESSAGES[i];
                                     var tempimg = Raylib.LoadImageFromMemory(".png", MESSAGES[i].TempImage); //if its not png then KYS lmaooooo
-                                    message.Image = Raylib.LoadTextureFromImage(tempimg); //it explodes RIGHT HERE with a FUCKING SEGFAULT???
+                                    message.Image = Raylib.LoadTextureFromImage(tempimg); 
                                     Raylib.UnloadImage(tempimg);
                                     message.InitiatedImage = true;
                                     message.TempImage = Array.Empty<byte>();
@@ -381,7 +405,7 @@ class Program
                         if (SCREENHEIGHT - currHeight + (int)MathF.Round(temp) < finalheight && (int)MathF.Round(temp) > 0) { currentScroll = (int)MathF.Round(temp); }
 
                         //text box rendering
-                        Raylib.DrawRectangle(5, SCREENHEIGHT - 60, SCREENWIDTH - 10, 60, Color.LightGray);
+                        Raylib.DrawRectangle(0, SCREENHEIGHT - 60, SCREENWIDTH, 60, Color.LightGray);
                         if(currMessage == "") { Raylib.DrawTextEx(font3, "enter text...", new Vector2(5, SCREENHEIGHT - 65), 50, 1, Color.Black); }
                         else {
                             var split = currMessage.Split('\n');
@@ -398,7 +422,21 @@ class Program
                             else { NetworkManager.SendMessage?.Invoke(currMessage); currMessage = ""; }
                         }
                         if (Raylib.IsKeyDown(KeyboardKey.Backspace) && currMessage.Length > 0) { currMessage = currMessage[..^1]; }
-                        if ((Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl)) && Raylib.IsKeyPressed(KeyboardKey.V)) { currMessage += Raylib.GetClipboardText_(); }
+                        if ((Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl)) && Raylib.IsKeyPressed(KeyboardKey.V)) { currMessage += Raylib.GetClipboardText_().Replace("\0", "").Replace("\r", ""); }
+
+                        //leave button
+                        {
+                            var rect = new Rectangle(new Vector2(SCREENWIDTH-205, 5), 200, 50);
+                            bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
+                            Raylib.DrawRectangleRounded(rect, 5, 5, Color.LightGray);
+                            Raylib.DrawRectangleRoundedLinesEx(rect, 5, 5, 3, hovering ? Color.Lime : Color.Black);
+                            DrawText("Leave", font1, RectCentre(rect), 40, Color.Black);
+
+                            if (Raylib.IsMouseButtonPressed(MouseButton.Left) && hovering)
+                            {
+                                NetworkManager.Close?.Invoke();
+                            }
+                        }
 
                         //send image
                         //{
@@ -415,9 +453,14 @@ class Program
                         //}
                         var files = Raylib.GetDroppedFiles();
                         if (files.Length > 0) {
-                            if (Path.GetExtension(files[0]) == "png" || Path.GetExtension(files[0]) == ".png")
+                            foreach (var file in files)
                             {
-                                NetworkManager.SendImage?.Invoke(File.ReadAllBytes(files[0]));
+                                if (Path.GetExtension(file) == "png" || Path.GetExtension(file) == ".png")
+                                {
+                                    var bytes = File.ReadAllBytes(file);
+                                    if (bytes.Length >= NetworkManager.MAX_MESSAGE_LEN - NetworkManager._magicNumber.Length - currUsername.Length - 3) { Console.WriteLine("Too big image"); }
+                                    else { NetworkManager.SendImage?.Invoke(bytes); }
+                                }
                             }
                         }
                         break;
@@ -432,11 +475,142 @@ class Program
         Raylib.CloseWindow();
     }
 
+    private static IPAddress GetLocalIPAddress()
+    {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+                return ip;
+            }
+        }
+        throw new Exception("No network adapters with an IPv4 address in the system!");
+    }
+
+    public static void PingServerAsync(string ip, int port, bool custom, int pingee)
+    {
+        Task.Run(() =>
+        {
+            try
+            {
+                IPAddress? address = GetLocalIPAddress();
+                //just keep using our own address if we put 'localhost'
+                if (ip != "localhost")
+                {
+                    bool valid = IPAddress.TryParse(ip, out IPAddress? tempaddress);
+                    if (!valid) {
+                        switch (pingee)
+                        {
+                            //custom
+                            case 0:
+                                currcustomcount = "X";
+                                break;
+                            //political
+                            case 1:
+                                currpolcount = "X";
+                                break;
+                            //general
+                            case 2:
+                                currgencount = "X";
+                                break;
+                        }
+                        return;
+                    }
+                    else { address = tempaddress; }
+                }
+
+                Ping ping = new();
+                var pr = ping.Send(address);
+                if (pr.Status != IPStatus.Success)
+                {
+                    switch (pingee)
+                    {
+                        //custom
+                        case 0:
+                            currcustomcount = "X";
+                            break;
+                        //political
+                        case 1:
+                            currpolcount = "X";
+                            break;
+                        //general
+                        case 2:
+                            currgencount = "X";
+                            break;
+                    }
+                    return;
+                }
+
+                if (custom) { pingingcustom = true; }
+                else { pingingservers += 1; }
+
+                using Socket clientSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                clientSocket.Connect(address, port);
+
+                // Send a ping message
+                byte[] pingMessage = new byte[NetworkManager._magicNumber.Length + 2];
+                Array.Copy(NetworkManager._magicNumber, 0, pingMessage, 0, NetworkManager._magicNumber.Length);
+                pingMessage[NetworkManager._magicNumber.Length] = NetworkManager.PING_CODE;
+                pingMessage[^1] = (byte)'\r';
+                clientSocket.Send(pingMessage);
+
+                // Receive response
+                byte[] buffer = new byte[1024];
+                int bytesRead = clientSocket.Receive(buffer);
+                
+                if (bytesRead > 0)
+                {
+                    if (custom) { pingingcustom = false; }
+                    else { pingingservers -= 1; }
+                    switch (pingee)
+                    {
+                        //custom
+                        case 0:
+                            currcustomcount = buffer[NetworkManager._magicNumber.Length].ToString();
+                            break;
+                        //political
+                        case 1:
+                            currpolcount = buffer[NetworkManager._magicNumber.Length].ToString();
+                            break;
+                        //general
+                        case 2:
+                            currgencount = buffer[NetworkManager._magicNumber.Length].ToString();
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (custom) { pingingcustom = false; }
+                else { pingingservers -= 1; }
+                switch (pingee)
+                {
+                    //custom
+                    case 0:
+                        currcustomcount = "X";
+                        break;
+                    //political
+                    case 1:
+                        currpolcount = "X";
+                        break;
+                    //general
+                    case 2:
+                        currgencount = "X";
+                        break;
+                }
+                Console.WriteLine($"Ping failed: {ex.Message}");
+            }
+        });
+    }
+
     private static void JoinRoom(string ip, string port)
     {
         if (!int.TryParse(port, out int finalport)) { return; }
 
-        NetworkManager _ = new(ip, finalport, currUsername);
+        if (!(IPAddress.TryParse(ip, out _) || ip == "localhost")) { return; }
+
+        _ = new NetworkManager(ip, finalport, currUsername);
     }
 
     private static unsafe void ChangeWorkingDirectory()

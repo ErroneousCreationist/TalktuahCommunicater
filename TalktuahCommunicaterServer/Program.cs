@@ -26,12 +26,15 @@ namespace TalktuahCommunicaterServer
         static void Main(string[] args)
         {
             PORT = 11000;
-            if (args.Length >= 1) { if (int.TryParse(args[0], out int value)) { PORT = value; } }
-
+            OPENPINGINGPORT = false;
+            if (args.Length > 0) { if (int.TryParse(args[0], out int value)) { PORT = value; } }
+            if (args.Length > 1) { if (args[1] == "true") { OPENPINGINGPORT = true; } }
             CLIENTS = new();
 
             MAX_MESSAGE_LEN = 26214400+_magicNumber.Length+2;
-            
+
+            Console.WriteLine($"Starting server on port {PORT} with the pinging port {PORT + 1}");
+            if (OPENPINGINGPORT) { new Thread(Host_ListenForPings).Start(); }
             Host_ListenForConnection();
         }
 
@@ -45,14 +48,16 @@ namespace TalktuahCommunicaterServer
         private const byte RECIEVE_CLIENT_LIST_CODE = 7;
         private const byte IMAGE_SENT_CODE = 8;
         private const byte RECIEVE_IMAGE_CODE = 9;
+        private const byte PING_CODE = 10;
 
         private static int MAX_MESSAGE_LEN;
 
         private static readonly byte[] _magicNumber = { 0xCA, 0xFE, 0xBA, 0xBE };
 
-        private static Socket? SERVER_SOCKET;
+        private static Socket? SERVER_SOCKET, PING_SOCKET;
         private static List<ConnectedClient>? CLIENTS = new();
         private static int PORT;
+        private static bool OPENPINGINGPORT;
 
         static bool ValidateMagicNumber(byte[] receivedMagic)
         {
@@ -76,6 +81,109 @@ namespace TalktuahCommunicaterServer
             return false;
         }
 
+        static int ConnectedClientCount
+        {
+            get
+            {
+                int returned = 0;
+                if (CLIENTS == null) { return returned; }
+                foreach (var item in CLIENTS)
+                {
+                    if (!item.ClientDisconnecting) { returned++; }
+                }
+                return returned;
+            }
+        }
+
+        static void Host_ListenForPings()
+        {
+            try
+            {
+                // Start the host here
+                IPEndPoint localEndPoint = new(IPAddress.Any, PORT + 1);
+                PING_SOCKET = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                PING_SOCKET.Bind(localEndPoint);
+                PING_SOCKET.Listen();
+                Console.WriteLine("Pinging endpoint is now operational");
+
+                // Begin listening for connected client pings
+                while (true)
+                {
+                    if (PING_SOCKET == null) { return; }
+                    var client = PING_SOCKET.Accept();
+                    if (client != null)
+                    {
+                        Task.Run(() => HandlePing(client)); // Handle the client in a separate thread
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                if (e is SocketException) { Console.WriteLine(e.ToString()); }
+            }
+        }
+
+        // Function to handle client communication
+        static void HandlePing(Socket client)
+        {
+            try
+            {
+                byte[] buffer = new byte[1024]; // Adjust buffer size as needed
+                var totallen = 0;
+                while (true)
+                {
+                    try
+                    {
+                        if (PING_SOCKET == null) { return; }
+                        if (!client.Connected) { return; }
+                        var bytes = new byte[1024];
+                        int bytesRec = client.Receive(bytes);
+                        if (bytesRec <= 0) { break; }
+                        Array.Copy(bytes, 0, buffer, totallen, bytesRec);
+                        totallen += bytesRec;
+                        if (buffer.Contains((byte)'\r') || totallen >= 1024) { break; }//look for EOF
+                        if (buffer.Length >= _magicNumber.Length && !ValidateMagicNumber(buffer))
+                        {
+                            Console.WriteLine("Received erroneous ping from " + IPAddress.Parse(((IPEndPoint)client.RemoteEndPoint).Address.ToString()));
+                            client.Close();
+                            return;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Ping disconnected with error: "+e.ToString());
+                        client.Close();
+                        return;
+                    }
+                }
+
+                byte[] receivedData = buffer[..totallen];
+                if (receivedData[_magicNumber.Length] != PING_CODE) {
+                    Console.WriteLine("Received erroneous ping from " + IPAddress.Parse(((IPEndPoint)client.RemoteEndPoint).Address.ToString()));
+                    client.Close();
+                }
+
+                // Process received data (implement your own message parsing here)
+                Console.WriteLine("Received ping from " + IPAddress.Parse(((IPEndPoint)client.RemoteEndPoint).Address.ToString())+", responding...");
+
+                // Prepare a response (implement your own response logic here)
+                byte[] responseData = new byte[_magicNumber.Length + 2];
+                Array.Copy(_magicNumber, 0, responseData, 0, _magicNumber.Length);
+                responseData[_magicNumber.Length] = (byte)ConnectedClientCount;
+                responseData[^1] = (byte)'\r';
+                client.Send(responseData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while receiving ping: {ex}");
+            }
+            finally
+            {
+                client.Close(); // Discard the client after responding
+            }
+        }
+
         static void Host_ListenForConnection()
         {
             try
@@ -84,7 +192,8 @@ namespace TalktuahCommunicaterServer
                 IPEndPoint localEndPoint = new(IPAddress.Any, PORT);
                 SERVER_SOCKET = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 SERVER_SOCKET.Bind(localEndPoint);
-                SERVER_SOCKET.Listen(1000);
+                SERVER_SOCKET.Listen();
+                Console.WriteLine("Endpoint is now operational");
 
                 //begin listening for messages
                 while (true)
@@ -138,7 +247,7 @@ namespace TalktuahCommunicaterServer
                     catch(Exception e)
                     {
                         Console.WriteLine(e.ToString());
-                        Console.WriteLine("Client "+CLIENTS[id].Username+" Disconnected with error. Press any key to continue.");
+                        Console.WriteLine("Client "+CLIENTS[id].Username+" Disconnected with error.");
                         CLIENTS[id].socket.Shutdown(SocketShutdown.Both);
                         CLIENTS[id].socket.Disconnect(false);
                         return;
@@ -222,6 +331,7 @@ namespace TalktuahCommunicaterServer
                             break;
                         }
                     case IMAGE_SENT_CODE:
+                        Console.WriteLine("Received image");
                         {
                             buffer[_magicNumber.Length] = RECIEVE_IMAGE_CODE;
                             byte[] sent = new byte[totallen];

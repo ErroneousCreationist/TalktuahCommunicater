@@ -1,2 +1,5 @@
-
+TalktuahCommunicaterServer/bin/
+TalktuahCommunicaterServer/obj/
+TalktuahCommunicaterClient/bin/
+TalktuahCommunicaterClient/obj/
 .DS_Store
