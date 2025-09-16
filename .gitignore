@@ -1,7 +1,4 @@
-TalktuahCommunicaterServer/bin/
-TalktuahCommunicaterServer/obj/
-TalktuahCommunicaterClient/bin/
-TalktuahCommunicaterClient/obj/
+
 .DS_Store
 TalktuahCommunicaterServer/.vs/TalktuahCommunicaterServer/CopilotIndices/17.14.1091.29919/SemanticSymbols.db
 /TalktuahCommunicaterServer/.vs/TalktuahCommunicaterServer/CopilotIndices
