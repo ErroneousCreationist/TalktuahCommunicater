@@ -33,7 +33,7 @@ namespace TalktuahCommunicaterServer
 
             MAX_MESSAGE_LEN = 26214400+_magicNumber.Length+2;
 
-            Console.WriteLine($"Starting server on port {PORT} with the pinging port {PORT + 1}");
+            Console.WriteLine($"Starting server on port {PORT}" + (OPENPINGINGPORT ? " with the pinging port {PORT + 1}" : ""));
             if (OPENPINGINGPORT) { new Thread(Host_ListenForPings).Start(); }
             Host_ListenForConnection();
         }

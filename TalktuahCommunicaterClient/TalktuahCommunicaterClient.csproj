@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>eb9a3b21-eae4-4430-8dd4-dfa9f7e7fbb1</UserSecretsId>
@@ -17,11 +17,5 @@
   <ItemGroup>
     <PackageReference Include="Raylib-cs" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="SharpTalk">
-      <HintPath>..\ref\SharpTalk.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

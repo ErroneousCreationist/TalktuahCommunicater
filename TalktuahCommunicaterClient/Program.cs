@@ -217,7 +217,7 @@ class Program
 
                         //political chat
                         {
-                            polchatbuttonpos += randDirs[0] * 10f / 60;
+                            //polchatbuttonpos += randDirs[0] * 3f / 60;
                             if(polchatbuttonpos.X + 300 > SCREENWIDTH || polchatbuttonpos.X < 0 || polchatbuttonpos.Y + 50 > SCREENHEIGHT || polchatbuttonpos.Y < 0) { randDirs[0] = Rotate(randDirs[0], double.Pi/2); }
                             var rect = new Rectangle(polchatbuttonpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
@@ -230,7 +230,7 @@ class Program
 
                         //genreal chat
                         {
-                            genchatbuttonpos += randDirs[1] * 10f/ 60;
+                            //genchatbuttonpos += randDirs[1] * 3f/ 60;
                             if (genchatbuttonpos.X + 300 > SCREENWIDTH || genchatbuttonpos.X < 0 || genchatbuttonpos.Y + 50 > SCREENHEIGHT || genchatbuttonpos.Y < 0) { randDirs[1] = Rotate(randDirs[1], double.Pi/2); }
                             var rect = new Rectangle(genchatbuttonpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
@@ -243,7 +243,7 @@ class Program
 
                         //refresh counts
                         {
-                            refreshbuttonpos += randDirs[2] * 10f / 60;
+                            //refreshbuttonpos += randDirs[2] * 3f / 60;
                             if (refreshbuttonpos.X + 300 > SCREENWIDTH || refreshbuttonpos.X < 0 || refreshbuttonpos.Y + 50 > SCREENHEIGHT || refreshbuttonpos.Y < 0) { randDirs[2] = Rotate(randDirs[2], double.Pi / 2); }
                             var rect = new Rectangle(refreshbuttonpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
@@ -256,7 +256,7 @@ class Program
 
                         //username field
                         {
-                            usernamepos += randDirs[3] * 10f / 60;
+                            //usernamepos += randDirs[3] * 3f / 60;
                             if (usernamepos.X + 500 > SCREENWIDTH || usernamepos.X < 0 || usernamepos.Y + 50 > SCREENHEIGHT || usernamepos.Y < 0) { randDirs[3] = Rotate(randDirs[3], double.Pi/2); }
                             var rect = new Rectangle(usernamepos, 500, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
@@ -279,7 +279,7 @@ class Program
 
                         //IP field
                         {
-                            ippos += randDirs[4] * 10f / 60;
+                            //ippos += randDirs[4] * 3f / 60;
                             if (ippos.X + 300 > SCREENWIDTH || ippos.X < 0 || ippos.Y + 50 > SCREENHEIGHT || ippos.Y < 0) { randDirs[4] = Rotate(randDirs[4], double.Pi/2); ; }
                             var rect = new Rectangle(ippos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
@@ -301,7 +301,7 @@ class Program
 
                         //Port field
                         {
-                            portpos += randDirs[6] * 10f / 60;
+                            //portpos += randDirs[6] * 3f / 60;
                             if (portpos.X + 300 > SCREENWIDTH || portpos.X < 0 || portpos.Y + 50 > SCREENHEIGHT || portpos.Y < 0) { randDirs[6] = Rotate(randDirs[6], double.Pi / 2); ; }
                             var rect = new Rectangle(portpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
@@ -323,7 +323,7 @@ class Program
 
                         //join custom
                         {
-                            joinpos += randDirs[5] * 10f / 60;
+                            //joinpos += randDirs[5] * 3f / 60;
                             if (joinpos.X + 300 > SCREENWIDTH || joinpos.X < 0 || joinpos.Y + 50 > SCREENHEIGHT || joinpos.Y < 0) { randDirs[5] = Rotate(randDirs[5], double.Pi / 2); }
                             var rect = new Rectangle(joinpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);
@@ -339,7 +339,7 @@ class Program
 
                         //query custom
                         {
-                            pingbuttonpos += randDirs[6] * 10f / 60;
+                            //pingbuttonpos += randDirs[6] * 3f / 60;
                             if (pingbuttonpos.X + 300 > SCREENWIDTH || pingbuttonpos.X < 0 || pingbuttonpos.Y + 50 > SCREENHEIGHT || pingbuttonpos.Y < 0) { randDirs[6] = Rotate(randDirs[6], double.Pi / 2); }
                             var rect = new Rectangle(pingbuttonpos, 300, 50);
                             bool hovering = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), rect);

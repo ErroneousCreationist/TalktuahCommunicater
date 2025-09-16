@@ -9,8 +9,7 @@
       "TalktuahCommunicaterClient/1.0.0": {
         "dependencies": {
           "Microsoft.Extensions.Configuration.UserSecrets": "5.0.0",
-          "Raylib-cs": "7.0.1",
-          "SharpTalk": "1.0.9223.35348"
+          "Raylib-cs": "7.0.1"
         },
         "runtime": {
           "TalktuahCommunicaterClient.dll": {}
@@ -156,14 +155,6 @@
             "fileVersion": "0.0.0.0"
           }
         }
-      },
-      "SharpTalk/1.0.9223.35348": {
-        "runtime": {
-          "SharpTalk.dll": {
-            "assemblyVersion": "1.0.9223.35348",
-            "fileVersion": "0.0.0.0"
-          }
-        }
       }
     }
   },
@@ -242,11 +233,6 @@
       "sha512": "sha512-Ub764yPExCago40qjPpTQqtYhhA0/aIEderv5XjB5peOXFs7A4YLyyARsfBv0JzCt4C+QvuqH0CrjAJIzgzjKA==",
       "path": "raylib-cs/7.0.1",
       "hashPath": "raylib-cs.7.0.1.nupkg.sha512"
-    },
-    "SharpTalk/1.0.9223.35348": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
     }
   }
 }
